@@ -10,5 +10,5 @@ public interface ITodoService {
     TodoDto create(Todo todo, Long userId);
     TodoDto get(Long id);
     TodoDto update(Todo todo, Long id);
-    TodoDto delete(Long id);
+    String delete(Long id);
 }

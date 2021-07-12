@@ -11,5 +11,5 @@ public interface IUserService {
     UserDto create(User user);
     UserDto get(long id);
     UserDto update(long id, User user);
-    UserDto delete(long id);
+    String delete(long id);
 }

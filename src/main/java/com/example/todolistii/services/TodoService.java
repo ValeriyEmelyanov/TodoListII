@@ -4,6 +4,8 @@ import com.example.todolistii.domain.Tag;
 import com.example.todolistii.domain.Todo;
 import com.example.todolistii.domain.User;
 import com.example.todolistii.dto.TodoDto;
+import com.example.todolistii.repositories.TodoRepository;
+import com.example.todolistii.repositories.UserRepository;
 import com.example.todolistii.services.interfaces.ITagService;
 import com.example.todolistii.services.interfaces.ITodoService;
 import com.example.todolistii.utils.Convertor;
@@ -11,49 +13,56 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class TodoService implements ITodoService {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     private final Convertor convertor;
-
     private final ITagService tagService;
+    private final TodoRepository todoRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public TodoService(Convertor convertor, ITagService tagService) {
+    public TodoService(Convertor convertor, ITagService tagService, TodoRepository todoRepository, UserRepository userRepository) {
         this.convertor = convertor;
         this.tagService = tagService;
+        this.todoRepository = todoRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<TodoDto> getAll(Long userId) {
-        return null;
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return todoRepository.findAllByUser(optionalUser.get()).stream()
+                .map(convertor::todoToDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public TodoDto create(Todo todo, Long userId) {
-        User user = entityManager.createQuery("SELECT user FROM User user WHERE user.id=:id", User.class)
-                .setParameter("id", userId)
-                .getSingleResult();
-        todo.setUser(user);
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            return new TodoDto();
+        }
 
         Set<Tag> tags = new HashSet<>(todo.getTags().size());
         tags.addAll(todo.getTags());
 
         todo.getTags().clear();
 
-        entityManager.persist(todo);
+        todo.setUser(optionalUser.get());
+        todoRepository.save(todo);
 
         tags.stream()
                 .map(tagService::getOrCreate)
@@ -66,18 +75,45 @@ public class TodoService implements ITodoService {
     @Override
     @Transactional(readOnly = true)
     public TodoDto get(Long id) {
-        return null;
+        Optional<Todo> optionalTodo = todoRepository.findById(id);
+        if (optionalTodo.isEmpty()) {
+            return new TodoDto();
+        }
+
+        return convertor.todoToDto(optionalTodo.get());
     }
 
     @Override
     @Transactional
     public TodoDto update(Todo todo, Long id) {
-        return null;
+        Optional<Todo> foundOptional = todoRepository.findById(id);
+        if (foundOptional.isEmpty()) {
+            return new TodoDto();
+        }
+        Todo target = foundOptional.get();
+        target.setName(todo.getName());
+        target.setComment(todo.getComment());
+        target.setStartDate(todo.getStartDate());
+        target.setEndDate(todo.getEndDate());
+        target.setImportant(todo.getImportant());
+        target.setPriority(todo.getPriority());
+
+        todoRepository.save(target);
+
+        return convertor.todoToDto(target);
     }
 
     @Override
     @Transactional
-    public TodoDto delete(Long id) {
-        return null;
+    public String delete(Long id) {
+        Optional<Todo> optionalTodo = todoRepository.findById(id);
+        if (optionalTodo.isEmpty()) {
+            return String.format("Todo with id: %d doesn't exist", id);
+        }
+        Todo todo = optionalTodo.get();
+        new HashSet<>(todo.getTags())
+                .forEach(tag -> tag.removeTodo(todo));
+        todoRepository.deleteById(id);
+        return String.format("Todo with id: %d was successfully removed", id);
     }
 }

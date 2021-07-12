@@ -1,6 +1,5 @@
 package com.example.todolistii.controllers;
 
-import com.example.todolistii.domain.Todo;
 import com.example.todolistii.domain.User;
 import com.example.todolistii.dto.UserDto;
 import com.example.todolistii.services.interfaces.IUserService;
@@ -45,16 +44,16 @@ public class UserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-//    @PutMapping("/users/{id}")
-//    public ResponseEntity<Integer> updateUser(@RequestBody User user, @PathVariable long id) {
-//        int result = userService.update(id, user);
-//        return new ResponseEntity<>(result, HttpStatus.OK);
-//    }
-//
-//    @DeleteMapping("/users/{id}")
-//    public ResponseEntity<Integer> deleteUser(@PathVariable long id) {
-//        int result = userService.delete(id);
-//        return new ResponseEntity<>(result, HttpStatus.OK);
-//    }
+    @PutMapping("/users/{id}")
+    public ResponseEntity<UserDto> updateUser(@RequestBody User user, @PathVariable long id) {
+        UserDto result = userService.update(id, user);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable long id) {
+        String result = userService.delete(id);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 
 }
