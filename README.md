@@ -2,9 +2,12 @@
 
 Строка подключения к базе jdbc:h2:D:/Projects/TodoListII/DB/TodoListDB
 
-#### Заметки
+#### Полезные ссылки
+[Обработка исключений в контроллерах Spring](https://habr.com/ru/post/528116/)
 
-Добавить пользователя через консоль в браузере:
+#### Работа с HTTP запросами в консоли браузера
+
+Добавить пользователя:
 ```
 fetch("http://localhost:8080/TodoListII_war_exploded/users/create", {
     body: JSON.stringify({

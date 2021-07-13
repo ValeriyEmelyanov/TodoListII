@@ -4,6 +4,7 @@ import com.example.todolistii.domain.Tag;
 import com.example.todolistii.domain.Todo;
 import com.example.todolistii.domain.User;
 import com.example.todolistii.dto.TodoDto;
+import com.example.todolistii.exceptions.EmptyDataException;
 import com.example.todolistii.repositories.TodoRepository;
 import com.example.todolistii.repositories.UserRepository;
 import com.example.todolistii.services.interfaces.ITagService;
@@ -53,7 +54,7 @@ public class TodoService implements ITodoService {
     public TodoDto create(Todo todo, Long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) {
-            return new TodoDto();
+            throw new EmptyDataException(String.format("Unable to get user with id: %d", userId));
         }
 
         Set<Tag> tags = new HashSet<>(todo.getTags().size());
@@ -77,7 +78,7 @@ public class TodoService implements ITodoService {
     public TodoDto get(Long id) {
         Optional<Todo> optionalTodo = todoRepository.findById(id);
         if (optionalTodo.isEmpty()) {
-            return new TodoDto();
+            throw new EmptyDataException(String.format("Unable to get todo with id: %d", id));
         }
 
         return convertor.todoToDto(optionalTodo.get());
@@ -88,7 +89,7 @@ public class TodoService implements ITodoService {
     public TodoDto update(Todo todo, Long id) {
         Optional<Todo> foundOptional = todoRepository.findById(id);
         if (foundOptional.isEmpty()) {
-            return new TodoDto();
+            throw new EmptyDataException(String.format("Unable to update todo with id: %d", id));
         }
         Todo target = foundOptional.get();
         target.setName(todo.getName());
@@ -108,7 +109,7 @@ public class TodoService implements ITodoService {
     public String delete(Long id) {
         Optional<Todo> optionalTodo = todoRepository.findById(id);
         if (optionalTodo.isEmpty()) {
-            return String.format("Todo with id: %d doesn't exist", id);
+            throw new EmptyDataException(String.format("Unable to delete todo with id: %d", id));
         }
         Todo todo = optionalTodo.get();
         new HashSet<>(todo.getTags())

@@ -2,6 +2,7 @@ package com.example.todolistii.services;
 
 import com.example.todolistii.domain.User;
 import com.example.todolistii.dto.UserDto;
+import com.example.todolistii.exceptions.EmptyDataException;
 import com.example.todolistii.repositories.UserRepository;
 import com.example.todolistii.services.interfaces.IUserService;
 import com.example.todolistii.utils.Convertor;
@@ -47,7 +48,7 @@ public class UserSevice implements IUserService {
     public UserDto get(long id) {
         Optional<User> foundOptional = userRepository.findById(id);
         if (foundOptional.isEmpty()) {
-            return new UserDto();
+            throw new EmptyDataException(String.format("Unable to get user with id: %d", id));
         }
         return convertor.userToDto(foundOptional.get());
     }
@@ -57,7 +58,7 @@ public class UserSevice implements IUserService {
     public UserDto update(long id, User user) {
         Optional<User> foundOptional = userRepository.findById(id);
         if (foundOptional.isEmpty()) {
-            return new UserDto();
+            throw new EmptyDataException(String.format("Unable to update user with id: %d", id));
         }
         User target = foundOptional.get();
         target.setEmail(user.getEmail());
@@ -70,7 +71,7 @@ public class UserSevice implements IUserService {
     public String delete(long id) {
         Optional<User> foundOptional = userRepository.findById(id);
         if (foundOptional.isEmpty()) {
-            return String.format("User with id: %d doesn`t exist", id);
+            throw new EmptyDataException(String.format("Unable to delete user with id: %d ", id));
         }
         userRepository.delete(foundOptional.get());
         return String.format("User with id: %d was successfully removed", id);
