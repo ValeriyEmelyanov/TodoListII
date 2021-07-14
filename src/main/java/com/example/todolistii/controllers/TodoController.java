@@ -42,6 +42,8 @@ public class TodoController {
                                               @RequestBody Todo todo,
                                               @PathVariable(name = "userId") Long userId) {
         TodoDto result = todoService.create(todo, userId);
+        // Можно взять userId, который пришел из token
+        // TodoDto result = todoService.create(todo, this.userId);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
