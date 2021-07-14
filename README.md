@@ -1,6 +1,18 @@
 # Todo List II
 
+
+
 Строка подключения к базе jdbc:h2:D:/Projects/TodoListII/DB/TodoListDB
+
+#### Описание
+Создано по материалам учебного курса Spring Data.
+Не является законченным приложением. Продемострировано:
+* Создание пустого проекта Spring MVC (ветка Step1_SimpleSpringMVC)
+* Работа с Template JDBC (ветка Step2_WorkWithJdbcTemplate)
+* Работа с Entity Manager (ветка Step3_WorkWithEntityManager)
+* Работа с JPA (ветки Step4_WorkWithJpa и main)
+* Аутентификация с созданием токена
+* Работа с АОП на примере авторизации пользователя 
 
 #### Полезные ссылки
 * [Обработка исключений в контроллерах Spring](https://habr.com/ru/post/528116/)
