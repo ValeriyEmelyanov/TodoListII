@@ -48,9 +48,20 @@ public class UserSevice implements IUserService {
     public UserDto get(long id) {
         Optional<User> foundOptional = userRepository.findById(id);
         if (foundOptional.isEmpty()) {
-            throw new EmptyDataException(String.format("Unable to get user with id: %d", id));
+//            throw new EmptyDataException(String.format("Unable to get user with id: %d", id));
+            return null;
         }
         return convertor.userToDto(foundOptional.get());
+    }
+
+    @Override
+    @Transactional
+    public UserDto findUserByEmailAndPassword(String email, String password) {
+        Optional<User> userOptional = userRepository.findByEmailAndPassword(email, password);
+        if (userOptional.isEmpty()) {
+            throw new EmptyDataException("Unable to get user with such email and password");
+        }
+        return convertor.userToDto(userOptional.get());
     }
 
     @Override

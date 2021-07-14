@@ -3,7 +3,9 @@
 Строка подключения к базе jdbc:h2:D:/Projects/TodoListII/DB/TodoListDB
 
 #### Полезные ссылки
-[Обработка исключений в контроллерах Spring](https://habr.com/ru/post/528116/)
+* [Обработка исключений в контроллерах Spring](https://habr.com/ru/post/528116/)
+* [Java and Spring development](https://blog.espenberntsen.net/2010/03/20/aspectj-cheat-sheet/)
+
 
 #### Работа с HTTP запросами в консоли браузера
 

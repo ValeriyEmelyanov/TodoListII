@@ -2,6 +2,8 @@ package com.example.todolistii.controllers;
 
 import com.example.todolistii.domain.User;
 import com.example.todolistii.dto.UserDto;
+import com.example.todolistii.security.TokenManager;
+import com.example.todolistii.security.TokenPayload;
 import com.example.todolistii.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -26,16 +29,32 @@ import java.util.NoSuchElementException;
 public class UserController {
 
     private final IUserService userService;
+    private final TokenManager tokenManager;
 
     @Autowired
-    public UserController(IUserService userService) {
+    public UserController(IUserService userService, TokenManager tokenManager) {
         this.userService = userService;
+        this.tokenManager = tokenManager;
     }
 
     @PostMapping("/users")
     public ResponseEntity<UserDto> createUser(@RequestBody User user) {
         UserDto result = userService.create(user);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/auth")
+    public ResponseEntity<String> authenticateUser(@RequestBody User user) {
+        UserDto authenticatedUser = userService.findUserByEmailAndPassword(user.getEmail(), user.getPassword());
+        if (authenticatedUser == null) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+
+        String token = tokenManager.createToken(new TokenPayload(authenticatedUser.getId(),
+                authenticatedUser.getEmail(),
+                Calendar.getInstance().getTime()));
+
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
     @GetMapping("/users")
