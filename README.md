@@ -1,7 +1,5 @@
 # Todo List II
 
-
-
 Строка подключения к базе jdbc:h2:D:/Projects/TodoListII/DB/TodoListDB
 
 #### Описание
@@ -12,12 +10,19 @@
 * Работа с Entity Manager (ветка Step3_WorkWithEntityManager)
 * Работа с JPA (ветки Step4_WorkWithJpa и main)
 * Аутентификация с созданием токена
-* Работа с АОП на примере авторизации пользователя 
+* Работа с АОП на примере авторизации пользователя
+* Модульное и интеграционное тестирование
+
+#### Технологии
+* Java 11
+* Maven
+* Spring MVC
+* Spring JDBC, Spring Data JPA
+* JUnit 4
 
 #### Полезные ссылки
 * [Обработка исключений в контроллерах Spring](https://habr.com/ru/post/528116/)
 * [Java and Spring development](https://blog.espenberntsen.net/2010/03/20/aspectj-cheat-sheet/)
-
 
 #### Работа с HTTP запросами в консоли браузера
 
